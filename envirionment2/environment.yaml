@@ -1,0 +1,10 @@
+resources:
+  - type: Microsoft.Resources/deployments
+    apiVersion: 2021-04-01
+    name: MyDeployment
+    properties:
+      mode: Incremental
+      templateLink:
+        uri: 'https://path-to-your-arm-template/azuredeploy.json'
+      parametersLink:
+        uri: 'https://path-to-your-parameters-file/azuredeploy.parameters.json'
