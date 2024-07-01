@@ -1,0 +1,31 @@
+name: TestAppShimegi
+version: 1.0.0
+summary: Azure Custom Environment for Resource Group
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+        - id: "sites_testShimegiADE_name"
+          name: testShimegiADE_custom
+          description: "Name of the Azure function"
+          type: string
+            
+        - id: "sites_afuifboihv2y5g_hp_name"
+          name: afuifboihv2y5g-hp-custom
+          description: "Backborn1 of the Azure Function"
+          type: string
+        
+        - id: "serverfarms_afuifboihv2y5g_hp_name"
+          name: afuifboihv2y5g-hp-custom
+          description: "Backborn2 of the Azure Function"
+          type: string
+
+        - id: "storageAccounts_test2shimegi2ade_name"
+          name: test2shimegi2ade2custom
+          description: "Name of the storage account"
+          type: string
+
+        - id: "serverfarms_ASP_firstenvirionmentnewworld_b8f7_name"
+          name: ASP-firstenvirionmentnewworld-b8f7-custom
+          description: "ASP"
+          type: string
