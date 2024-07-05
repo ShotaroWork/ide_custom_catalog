@@ -1,0 +1,31 @@
+name: TestResourceMadeByManual
+version: 1.0.0
+summary: Azure Custom Environment for Resource Group
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+        - id: "sites_functions_name"
+          name: Name of Azure Functions 
+          description: "Name of the Azure function"
+          type: string
+            
+        - id: "sites_app_name"
+          name: Name of Azure App Service
+          description: "Backborn1 of the Azure Function"
+          type: string
+        
+        - id: "serverfarms_app_name"
+          name: Name of server config file for App Service
+          description: "Backborn2 of the Azure Function"
+          type: string
+
+        - id: "storageAccounts_service_name"
+          name: Name of Storage Accounts
+          description: "Name of the storage account"
+          type: string
+
+        - id: "serverfarms_ASP_functions_name"
+          name: Name of server config file for Azure Functions
+          description: "ASP"
+          type: string
