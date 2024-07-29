@@ -10,8 +10,8 @@
             "defaultValue": "Shimegi-CAE",
             "type": "String"
         },
-        "storageAccounts_cae1shimegi_name": {
-            "defaultValue": "cae1shimegi",
+        "storageAccounts_cae07shimegi29_name": {
+            "defaultValue": "cae07shimegi29",
             "type": "String"
         },
         "serverfarms_ASP_RGSHIMEGICAE_962e_name": {
@@ -102,7 +102,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2023-05-01",
-            "name": "[parameters('storageAccounts_cae1shimegi_name')]",
+            "name": "[parameters('storageAccounts_cae07shimegi29_name')]",
             "location": "japaneast",
             "tags": {
                 "作成者": "SHIMEGI"
@@ -244,9 +244,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "sku": {
                 "name": "Standard_LRS",
@@ -265,9 +265,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "sku": {
                 "name": "Standard_LRS",
@@ -289,9 +289,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/queueServices",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "properties": {
                 "cors": {
@@ -302,9 +302,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/tableServices",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "properties": {
                 "cors": {
@@ -612,10 +612,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default/azure-webjobs-hosts')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default/azure-webjobs-hosts')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae1shimegi_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae07shimegi29_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "properties": {
                 "immutableStorageWithVersioning": {
@@ -629,10 +629,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default/azure-webjobs-secrets')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default/azure-webjobs-secrets')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae1shimegi_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae07shimegi29_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "properties": {
                 "immutableStorageWithVersioning": {
@@ -646,10 +646,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
             "apiVersion": "2023-05-01",
-            "name": "[concat(parameters('storageAccounts_cae1shimegi_name'), '/default/cae-functions9dbc')]",
+            "name": "[concat(parameters('storageAccounts_cae07shimegi29_name'), '/default/cae-functions9dbc')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae1shimegi_name'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae1shimegi_name'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae07shimegi29_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae07shimegi29_name'))]"
             ],
             "properties": {
                 "accessTier": "TransactionOptimized",
