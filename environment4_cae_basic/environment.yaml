@@ -1,0 +1,31 @@
+name: Midterm Resource(AF,AS,DB,EH)
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+        - id: "sites_cae_functions_name"
+          name: Name of Azure Functions 
+          description: "Ex. cae-functions "
+          type: string
+            
+        - id: "namespaces_Shimegi_CAE_name"
+          name: Name of Eventhub namespace
+          description: "Ex. Shimegi-CAE "
+          type: string
+        
+        - id: "flexibleServers_shimegi_cae_server_name"
+          name: Name of postgreSQL server
+          description: "Ex. shimegi-cae-server "
+          type: string
+
+        - id: "storageAccounts_service_name"
+          name: Name of Storage Accounts
+          description: "Ex. cae1shimegi "
+          type: string
+
+        - id: "serverfarms_ASP_functions_name"
+          name: Name of server config file for Azure Functions
+          description: "ASP-RGSHIMEGICAE-962e"
+          type: string
