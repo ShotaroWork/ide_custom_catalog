@@ -1,4 +1,4 @@
-name: Midterm Resource(AF,AS,DB,EH)
+name: MidtermResource
 version: 1.0.0
 summary: Azure Custom Environment including EventHub
 description: Functions included
