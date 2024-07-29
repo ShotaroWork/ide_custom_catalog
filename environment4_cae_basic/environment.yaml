@@ -6,26 +6,26 @@ runner: ARM
 templatePath: azuredeploy.json
 parameters:
         - id: "sites_cae_functions_name"
-          name: Name of Azure Functions 
+          name: Name of Azure Functions(Ex. cae-functions ) 
           description: "Ex. cae-functions "
           type: string
             
         - id: "namespaces_Shimegi_CAE_name"
-          name: Name of Eventhub namespace
+          name: Name of Eventhub namespace(Ex. Shimegi-CAE )
           description: "Ex. Shimegi-CAE "
           type: string
         
         - id: "flexibleServers_shimegi_cae_server_name"
-          name: Name of postgreSQL server
+          name: Name of postgreSQL server (Ex. shimegi-cae-server )
           description: "Ex. shimegi-cae-server "
           type: string
 
-        - id: "storageAccounts_service_name"
-          name: Name of Storage Accounts
+        - id: "storageAccounts_cae1shimegi_name"
+          name: Name of Storage Accounts (Ex. cae1shimegi )
           description: "Ex. cae1shimegi "
           type: string
 
-        - id: "serverfarms_ASP_functions_name"
-          name: Name of server config file for Azure Functions
-          description: "ASP-RGSHIMEGICAE-962e"
+        - id: "serverfarms_ASP_RGSHIMEGICAE_962e_name"
+          name: Name of config file for Azure Functions(Ex. ASP-RGSHIMEGICAE-962e)
+          description: "Ex. ASP-RGSHIMEGICAE-962e"
           type: string
