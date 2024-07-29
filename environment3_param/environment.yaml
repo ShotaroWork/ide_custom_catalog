@@ -22,7 +22,7 @@ parameters:
 
         - id: "storageAccounts_service_name"
           name: Name of Storage Accounts
-          description: "Name of the storage account"
+          description: "Name of the storage account (半角, 数字のみ)"
           type: string
 
         - id: "serverfarms_ASP_functions_name"
