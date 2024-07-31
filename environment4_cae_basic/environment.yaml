@@ -20,7 +20,7 @@ parameters:
           description: "Ex. shimegi-cae-server "
           type: string
 
-        - id: "storageAccounts_cae1shimegi_name"
+        - id: "storageAccounts_cae2shimegi_name"
           name: Name of Storage Accounts (Ex.cae07shimegi29 )
           description: "Ex. cae1shimegi "
           type: string
@@ -28,4 +28,15 @@ parameters:
         - id: "serverfarms_ASP_RGSHIMEGICAE_962e_name"
           name: Name of config file for Azure Functions(Ex. ASP-RGSHIMEGICAE-962e)
           description: "Ex. ASP-RGSHIMEGICAE-962e"
+          type: string
+
+        - id: "flexibleServers_admin_name"
+          name: Name of admin in PostgreSQL (Ex. watchman)
+          description: "Ex. watchman"
+          type: string
+
+        - id: "flexibleServers_admin_password"
+          name: Name of admin password in PostgreSQL (Ex. password)
+          description: "Ex. password"
+          required: true
           type: string
