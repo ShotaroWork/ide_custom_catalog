@@ -94,8 +94,8 @@
                 "作成者": "SHIMEGI"
             },
             "sku": {
-                "name": "Basic",
-                "tier": "Basic",
+                "name": "Standard",
+                "tier": "Standard",
                 "capacity": 1
             },
             "properties": {
@@ -110,7 +110,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[parameters('storageAccounts_cae2shimegi_name')]",
             "location": "japaneast",
             "tags": {
@@ -252,7 +252,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
@@ -273,7 +273,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
@@ -297,7 +297,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/queueServices",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
@@ -310,7 +310,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/tableServices",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
@@ -620,7 +620,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-hosts')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
@@ -637,7 +637,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-secrets')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
@@ -654,7 +654,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
-            "apiVersion": "2023-05-01",
+            "apiVersion": "2023-04-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/cae-functions9dbc')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
