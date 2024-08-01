@@ -655,7 +655,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
             "apiVersion": "2023-04-01",
-            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/cae-functions9dbc')]",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/',parameters('sites_cae_functions_name'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
