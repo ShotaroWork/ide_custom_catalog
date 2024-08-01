@@ -2,8 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_cae_functions_name": {
-            "defaultValue": "cae-functions",
+        "sites_shimegi_cae_name": {
+            "defaultValue": "shimegi-cae",
             "type": "String"
         },
         "namespaces_Shimegi_CAE_name": {
@@ -14,8 +14,8 @@
             "defaultValue": "cae2shimegi",
             "type": "String"
         },
-        "serverfarms_ASP_RGSHIMEGICAE_962e_name": {
-            "defaultValue": "ASP-RGSHIMEGICAE-962e",
+        "serverfarms_ASP_RGSHIMEGICAE_b7eb_name": {
+            "defaultValue": "ASP-RGSHIMEGICAE-b7eb",
             "type": "String"
         },
         "flexibleServers_shimegi_cae_server_name": {
@@ -151,7 +151,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2023-12-01",
-            "name": "[parameters('serverfarms_ASP_RGSHIMEGICAE_962e_name')]",
+            "name": "[parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name')]",
             "location": "Japan East",
             "tags": {
                 "作成者": "SHIMEGI"
@@ -324,10 +324,10 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2023-12-01",
-            "name": "[parameters('sites_cae_functions_name')]",
+            "name": "[parameters('sites_shimegi_cae_name')]",
             "location": "Japan East",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_962e_name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name'))]"
             ],
             "tags": {
                 "作成者": "SHIMEGI"
@@ -337,17 +337,17 @@
                 "enabled": true,
                 "hostNameSslStates": [
                     {
-                        "name": "[concat(parameters('sites_cae_functions_name'), '.azurewebsites.net')]",
+                        "name": "[concat(parameters('sites_shimegi_cae_name'), '.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "hostType": "Standard"
                     },
                     {
-                        "name": "[concat(parameters('sites_cae_functions_name'), '.scm.azurewebsites.net')]",
+                        "name": "[concat(parameters('sites_shimegi_cae_name'), '.scm.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "hostType": "Repository"
                     }
                 ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_962e_name'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name'))]",
                 "reserved": false,
                 "isXenon": false,
                 "hyperV": false,
@@ -382,10 +382,10 @@
         {
             "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
             "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('sites_cae_functions_name'), '/ftp')]",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/ftp')]",
             "location": "Japan East",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cae_functions_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
             ],
             "tags": {
                 "作成者": "SHIMEGI"
@@ -397,10 +397,10 @@
         {
             "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
             "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('sites_cae_functions_name'), '/scm')]",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/scm')]",
             "location": "Japan East",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cae_functions_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
             ],
             "tags": {
                 "作成者": "SHIMEGI"
@@ -412,10 +412,10 @@
         {
             "type": "Microsoft.Web/sites/config",
             "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('sites_cae_functions_name'), '/web')]",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/web')]",
             "location": "Japan East",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cae_functions_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
             ],
             "tags": {
                 "作成者": "SHIMEGI"
@@ -498,55 +498,15 @@
             }
         },
         {
-            "type": "Microsoft.Web/sites/functions",
-            "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('sites_cae_functions_name'), '/functions1')]",
-            "location": "Japan East",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cae_functions_name'))]"
-            ],
-            "properties": {
-                "script_href": "https://cae-functions.azurewebsites.net/admin/vfs/site/wwwroot/http_sample_gpt.dll",
-                "test_data_href": "https://cae-functions.azurewebsites.net/admin/vfs/data/Functions/sampledata/functions1.dat",
-                "href": "https://cae-functions.azurewebsites.net/admin/functions/functions1",
-                "config": {
-                    "name": "functions1",
-                    "entryPoint": "gpt.Function.functions1.Run",
-                    "scriptFile": "http_sample_gpt.dll",
-                    "language": "dotnet-isolated",
-                    "functionDirectory": "",
-                    "bindings": [
-                        {
-                            "name": "req",
-                            "type": "httpTrigger",
-                            "direction": "In",
-                            "authLevel": "Anonymous",
-                            "methods": [
-                                "post"
-                            ]
-                        },
-                        {
-                            "name": "$return",
-                            "type": "http",
-                            "direction": "Out"
-                        }
-                    ]
-                },
-                "invoke_url_template": "https://cae-functions.azurewebsites.net/api/functions1",
-                "language": "dotnet-isolated",
-                "isDisabled": true
-            }
-        },
-        {
             "type": "Microsoft.Web/sites/hostNameBindings",
             "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('sites_cae_functions_name'), '/', parameters('sites_cae_functions_name'), '.azurewebsites.net')]",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/', parameters('sites_shimegi_cae_name'), '.azurewebsites.net')]",
             "location": "Japan East",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cae_functions_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
             ],
             "properties": {
-                "siteName": "cae-functions",
+                "siteName": "shimegi-cae",
                 "hostNameType": "Verified"
             }
         },
@@ -563,7 +523,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2023-04-01",
+            "apiVersion": "2023-05-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-hosts')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
@@ -580,7 +540,7 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2023-04-01",
+            "apiVersion": "2023-05-01",
             "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-secrets')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
@@ -593,6 +553,20 @@
                 "defaultEncryptionScope": "$account-encryption-key",
                 "denyEncryptionScopeOverride": false,
                 "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2023-05-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/shimegi-caea0d1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "accessTier": "TransactionOptimized",
+                "shareQuota": 102400,
+                "enabledProtocols": "SMB"
             }
         }
     ]
