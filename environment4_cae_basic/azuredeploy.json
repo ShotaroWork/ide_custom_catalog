@@ -191,7 +191,7 @@
         {
             "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
             "apiVersion": "2023-12-01-preview",
-            "name": "[concat(parameters('flexibleServers_shimegi_cae_server_name'), '/AllowAllAzureServicesAndResourcesWithinAzureIps_2024-7-9_10-43-37')]",
+            "name": "[concat(parameters('flexibleServers_shimegi_cae_server_name'), '/AllowAllAzureServicesAndResourcesWithinAzureIps_2024-7-31_10-43-37')]",
             "dependsOn": [
                 "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_shimegi_cae_server_name'))]"
             ],
