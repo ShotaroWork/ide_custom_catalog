@@ -1,0 +1,46 @@
+{
+    "code": "ExportTemplateCompletedWithErrors",
+    "message": "Export template operation completed with errors. Some resources were not exported. Please see details for more information.",
+    "details": [
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.DBforPostgreSQL/flexibleServers/administrators",
+            "message": "Could not get resources of the type 'Microsoft.DBforPostgreSQL/flexibleServers/administrators'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.Storage/storageAccounts/inventoryPolicies",
+            "message": "Could not get resources of the type 'Microsoft.Storage/storageAccounts/inventoryPolicies'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.Storage/storageAccounts/storageTaskAssignments",
+            "message": "Could not get resources of the type 'Microsoft.Storage/storageAccounts/storageTaskAssignments'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.EventHub/namespaces/schemagroups",
+            "message": "Could not get resources of the type 'Microsoft.EventHub/namespaces/schemagroups'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.Web/sites/sitecontainers",
+            "message": "Could not get resources of the type 'Microsoft.Web/sites/sitecontainers'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.Web/sites/hybridconnection",
+            "message": "Could not get resources of the type 'Microsoft.Web/sites/hybridconnection'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.RecoveryServices/vaults/certificates",
+            "message": "Could not get resources of the type 'Microsoft.RecoveryServices/vaults/certificates'. Resources of this type will not be exported."
+        },
+        {
+            "code": "ExportTemplateProviderError",
+            "target": "Microsoft.RecoveryServices/vaults/extendedInformation",
+            "message": "Could not get resources of the type 'Microsoft.RecoveryServices/vaults/extendedInformation'. Resources of this type will not be exported."
+        }
+    ]
+}
