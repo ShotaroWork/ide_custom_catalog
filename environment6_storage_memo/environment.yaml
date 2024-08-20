@@ -25,11 +25,6 @@ parameters:
     description: "Ex. cae1shimegi" # 変更点
     type: string
 
-  - id: "vaults_vault_smg0819_name" # 新規追加
-    name: Name of the Recovery Services Vault (Ex. vault-smg0819)
-    description: "Ex. vault-smg0819"
-    type: string
-
   - id: "serverfarms_ASP_RGSHIMEGICAE_b7eb_name"
     name: Name of config file for Azure Functions (Ex. ASP-RGSHIMEGICAE-962e)
     description: "Ex. ASP_RGSHIMEGICAE_b7eb"

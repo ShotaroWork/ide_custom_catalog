@@ -1,13 +1,16 @@
-# azuredeploy.json作成時の注意
+# azuredeploy.json作成時のチェックリスト(2024 8/20作成)
 
-## Storageを扱う場合
--"accessTier": "TransactionOptimized",が記載されていないか？特にファイル共有が存在する場合
+## "type": "Microsoft.Storage/storageAccounts/fileServices/shares"について
+-"accessTier": "TransactionOptimized"が記載されていないか？あれば記載を消す事。
 
-## EventHubを扱う場合
--"sku"がBasicになっていないか？
+## "type": "Microsoft.EventHub/namespaces"について
+-"sku":"Standard"になっているか？
 
-## PostgreSQLを扱う場合
-- 管理者名とパスワードを変数として追加しているか？
+## "flexibleServers_admin_name"
+- "flexibleServers_admin_name":{"defaultValue": "watchman","type": "String"}が"parameters"として存在するか？
+
+## "flexibleServers_admin_password"
+- "flexibleServers_admin_password": {"defaultValue": "cloudG2024","type": "String"}が"parameters"として存在するか？
 
 ## その他
 -apiVersionは適正なものになっているか？
