@@ -20,9 +20,9 @@ parameters:
     description: "Ex. shimegi-cae-server"
     type: string
 
-  - id: "storageAccounts_cae3shimegi_name" # 変更点
+  - id: "storageAccounts_cae1shimegi_name" # 変更点
     name: Name of Storage Accounts (Ex. cae1shimegi)
-    description: "Ex. cae3shimegi" # 変更点
+    description: "Ex. cae1shimegi" # 変更点
     type: string
 
   - id: "vaults_vault_smg0819_name" # 新規追加
