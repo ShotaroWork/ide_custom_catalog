@@ -5985,7 +5985,6 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae3shimegi_name'))]"
             ],
             "properties": {
-                "accessTier": "TransactionOptimized",
                 "shareQuota": 102400,
                 "enabledProtocols": "SMB"
             }
@@ -5999,7 +5998,6 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae3shimegi_name'))]"
             ],
             "properties": {
-                "accessTier": "TransactionOptimized",
                 "shareQuota": 102400,
                 "enabledProtocols": "SMB"
             }
