@@ -1,0 +1,47 @@
+name: AI_environment
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+  location:
+    type: string
+    defaultValue: "[resourceGroup().location]"
+    metadata:
+      description: "The location where the resources will be deployed."
+  
+  functionAppName:
+    type: string
+    metadata:
+      description: "The name of the Azure Function App."
+  
+  storageAccountName:
+    type: string
+    metadata:
+      description: "The name of the Azure Storage Account."
+  
+  postgresqlServerName:
+    type: string
+    metadata:
+      description: "The name of the PostgreSQL server."
+  
+  postgresqlAdminLogin:
+    type: string
+    metadata:
+      description: "Admin username for the PostgreSQL server."
+  
+  postgresqlAdminPassword:
+    type: securestring
+    metadata:
+      description: "Admin password for the PostgreSQL server."
+  
+  eventHubNamespace:
+    type: string
+    metadata:
+      description: "The name of the Event Hub namespace."
+  
+  eventHubName:
+    type: string
+    metadata:
+      description: "The name of the Event Hub."
