@@ -25,7 +25,7 @@ parameters:
     description: "Ex. watchman"
     type: string
 
-  - id: "postgresqlAdminLogin"
+  - id: "postgresqlAdminPassword"
     name: Name of admin password in PostgreSQL (Ex. password)
     description: "Ex. password"
     required: true
