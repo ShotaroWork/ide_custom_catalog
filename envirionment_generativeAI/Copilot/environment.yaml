@@ -20,7 +20,7 @@ parameters:
     description: "Ex. shimegi-cae-server"
     type: string
 
-  - id: "postgresqlAdminLogin"
+  - id: "postgresqlAdminUser"
     name: Name of admin in PostgreSQL (Ex. watchman)
     description: "Ex. watchman"
     type: string
@@ -31,7 +31,7 @@ parameters:
     required: true
     type: string
 
-  - id: "eventHubNamespace"
+  - id: "eventHubNamespaceName"
     name: Name of EventHub namespace (Ex. Shimegi-CAE)
     description: "Ex. Shimegi-CAE"
     type: string
