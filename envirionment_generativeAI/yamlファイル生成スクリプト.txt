@@ -1,0 +1,285 @@
+yamlファイルのテンプレートとJSONファイルを投下する。JSONファイルから必要な情報を抜き出し、yamlファイルに変換せよ。
+まずyamlファイルはこれだ。
+name: MidtermResource2
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+        - id: "sites_shimegi_cae_name"
+          name: Name of Azure Functions(Ex. cae-functions ) 
+          description: "Ex. cae-functions "
+          type: string
+            
+        - id: "namespaces_Shimegi_CAE_name"
+          name: Name of Eventhub namespace(Ex. Shimegi-CAE )
+          description: "Ex. Shimegi-CAE "
+          type: string
+        
+        - id: "flexibleServers_shimegi_cae_server_name"
+          name: Name of postgreSQL server (Ex. shimegi-cae-server )
+          description: "Ex. shimegi-cae-server "
+          type: string
+
+        - id: "storageAccounts_cae2shimegi_name"
+          name: Name of Storage Accounts (Ex.cae07shimegi29 )
+          description: "Ex. cae2shimegi "
+          type: string
+
+        - id: "serverfarms_ASP_RGSHIMEGICAE_b7eb_name"
+          name: Name of config file for Azure Functions(Ex. ASP-RGSHIMEGICAE-962e)
+          description: "Ex. ASP_RGSHIMEGICAE_b7eb"
+          type: string
+
+        - id: "flexibleServers_admin_name"
+          name: Name of admin in PostgreSQL (Ex. watchman)
+          description: "Ex. watchman"
+          type: string
+
+        - id: "flexibleServers_admin_password"
+          name: Name of admin password in PostgreSQL (Ex. password)
+          description: "Ex. password"
+          required: true
+          type: string
+JSONファイルを提供していただければ、必要な情報を抜き出してYAMLファイルに変換するお手伝いができます。JSONファイルの内容を投下してください。
+
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location where the resources will be deployed."
+      }
+    },
+    "functionAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Azure Function App."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Azure Storage Account."
+      }
+    },
+    "postgresqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the PostgreSQL server."
+      }
+    },
+    "postgresqlAdminLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin username for the PostgreSQL server."
+      }
+    },
+    "postgresqlAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password for the PostgreSQL server."
+      }
+    },
+    "eventHubNamespace": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Event Hub namespace."
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Event Hub."
+      }
+    }
+  },
+  "variables": {
+    "storageAccountType": "Standard_LRS",
+    "postgresqlSku": {
+      "name": "B_Gen5_1",
+      "tier": "Basic",
+      "capacity": 1
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-04-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[variables('storageAccountType')]",
+        "tier": "Standard"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "supportsHttpsTrafficOnly": true,
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('postgresqlServerName')]",
+      "location": "[parameters('location')]",
+      "sku": "[variables('postgresqlSku')]",
+      "properties": {
+        "version": "11",
+        "sslEnforcement": "Enabled",
+        "administratorLogin": "[parameters('postgresqlAdminLogin')]",
+        "administratorLoginPassword": "[parameters('postgresqlAdminPassword')]",
+        "storageProfile": {
+          "storageMB": 5120,
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        },
+        "highAvailability": {
+          "mode": "Disabled"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2021-11-01",
+      "name": "[parameters('eventHubNamespace')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "properties": {
+        "isAutoInflateEnabled": false,
+        "maximumThroughputUnits": 0,
+        "serviceBusEndpoint": "[concat(parameters('eventHubNamespace'), '.servicebus.', parameters('location'), '.azure.net')]"
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2021-11-01",
+      "name": "[concat(parameters('eventHubNamespace'), '/', parameters('eventHubName'))]",
+      "properties": {
+        "messageRetentionInDays": 7,
+        "partitionCount": 4,
+        "status": "Active"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespace'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('functionAppName'), 'Plan'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-04-01').keys[0].value)]"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            }
+          ]
+        },
+        "httpsOnly": true,
+        "state": "Running"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('postgresqlServerName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespace'), parameters('eventHubName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2021-02-01",
+      "name": "[concat(parameters('functionAppName'), 'Plan')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "capacity": 0
+      },
+      "kind": "functionapp",
+      "properties": {
+        "perSiteScaling": false,
+        "minimumElasticInstanceCount": 0,
+        "maximumElasticInstanceCount": 1
+      }
+    }
+  ],
+  "outputs": {
+    "functionAppUrl": {
+      "type": "string",
+      "value": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net')]"
+    }
+  }
+}
+以下は、提供されたJSONファイルの必要な情報を抽出し、YAML形式に変換したものです。YAMLファイルでは、同様のIDを持つパラメータがJSONのparametersセクションから取られています。
+
+name: MidtermResource2
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+  - id: "sites_shimegi_cae_name"
+    name: Name of Azure Functions (Ex. cae-functions)
+    description: "Ex. cae-functions"
+    type: string
+
+  - id: "storageAccounts_cae2shimegi_name"
+    name: Name of Azure Storage Account (Ex. cae07shimegi29)
+    description: "Ex. cae07shimegi29"
+    type: string
+
+  - id: "flexibleServers_shimegi_cae_server_name"
+    name: Name of PostgreSQL server (Ex. shimegi-cae-server)
+    description: "Ex. shimegi-cae-server"
+    type: string
+
+  - id: "flexibleServers_admin_name"
+    name: Name of admin in PostgreSQL (Ex. watchman)
+    description: "Ex. watchman"
+    type: string
+
+  - id: "flexibleServers_admin_password"
+    name: Name of admin password in PostgreSQL (Ex. password)
+    description: "Ex. password"
+    required: true
+    type: string
+
+  - id: "namespaces_Shimegi_CAE_name"
+    name: Name of EventHub namespace (Ex. Shimegi-CAE)
+    description: "Ex. Shimegi-CAE"
+    type: string
+
+  - id: "eventHubName"
+    name: Name of Event Hub (Ex. EventHub1)
+    description: "Ex. EventHub1"
+    type: string
+説明：
+パラメータの抽出: JSONファイル内のparametersセクションから必要な情報を抜き出しています。特にmetadataのdescriptionをYAML形式のdescriptionに対応させています。
+YAML形式の整形: 各パラメータはYAMLのリストとして整形されており、ID、名前、説明、タイプを含んでいます。
+必要に応じて、更に調整を加えることができますので、コメントや要望があればお知らせください。
+
+

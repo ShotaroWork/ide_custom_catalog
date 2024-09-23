@@ -20,7 +20,7 @@ parameters:
     description: "Ex. shimegi-cae-server"
     type: string
 
-  - id: "postgresqlAdminLogine"
+  - id: "postgresqlAdminLogin"
     name: Name of admin in PostgreSQL (Ex. watchman)
     description: "Ex. watchman"
     type: string
