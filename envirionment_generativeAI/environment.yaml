@@ -5,43 +5,38 @@ description: Functions included
 runner: ARM
 templatePath: azuredeploy.json
 parameters:
-  location:
+  - id: "sites_shimegi_cae_name"
+    name: Name of Azure Functions (Ex. cae-functions)
+    description: "Ex. cae-functions"
     type: string
-    defaultValue: "[resourceGroup().location]"
-    metadata:
-      description: "The location where the resources will be deployed."
-  
-  functionAppName:
+
+  - id: "storageAccounts_cae2shimegi_name"
+    name: Name of Azure Storage Account (Ex. cae07shimegi29)
+    description: "Ex. cae07shimegi29"
     type: string
-    metadata:
-      description: "The name of the Azure Function App."
-  
-  storageAccountName:
+
+  - id: "flexibleServers_shimegi_cae_server_name"
+    name: Name of PostgreSQL server (Ex. shimegi-cae-server)
+    description: "Ex. shimegi-cae-server"
     type: string
-    metadata:
-      description: "The name of the Azure Storage Account."
-  
-  postgresqlServerName:
+
+  - id: "flexibleServers_admin_name"
+    name: Name of admin in PostgreSQL (Ex. watchman)
+    description: "Ex. watchman"
     type: string
-    metadata:
-      description: "The name of the PostgreSQL server."
-  
-  postgresqlAdminLogin:
+
+  - id: "flexibleServers_admin_password"
+    name: Name of admin password in PostgreSQL (Ex. password)
+    description: "Ex. password"
+    required: true
     type: string
-    metadata:
-      description: "Admin username for the PostgreSQL server."
-  
-  postgresqlAdminPassword:
-    type: securestring
-    metadata:
-      description: "Admin password for the PostgreSQL server."
-  
-  eventHubNamespace:
+
+  - id: "namespaces_Shimegi_CAE_name"
+    name: Name of EventHub namespace (Ex. Shimegi-CAE)
+    description: "Ex. Shimegi-CAE"
     type: string
-    metadata:
-      description: "The name of the Event Hub namespace."
-  
-  eventHubName:
+
+  - id: "eventHubName"
+    name: Name of Event Hub (Ex. EventHub1)
+    description: "Ex. EventHub1"
     type: string
-    metadata:
-      description: "The name of the Event Hub."
