@@ -1,0 +1,664 @@
+現在の情報から分かるだけの必須パラメータを上記チェックリストに明記しろ。
+また「適切」などはどんなものが選択されていればよいか明文化しろ。
+以下に、ARMテンプレートのデプロイにおける必須パラメータをチェックリストに明記し、"適切"についての具体的な内容を明文化しました。
+
+ARM テンプレートセルフチェックリスト（必須パラメータと具体的な設定）
+1. テンプレートの基本構成
+ $schemaが正しく設定されている。
+ contentVersionが適切に設定されている。
+2. 必須パラメータの定義
+ functionAppName: Azure Functionsの名前（例: cae-functions）。
+ storageAccountName: Azure Storageアカウントの名前（例: cae07shimegi29）。
+ postgresqlServerName: PostgreSQLサーバーの名前（例: shimegi-cae-server）。
+ postgresqlAdminLogin: PostgreSQLの管理者ログイン名（例: watchman）。
+ postgresqlAdminPassword: PostgreSQLの管理者パスワード（例: StrongPassword123!）※必須。
+ eventHubNamespace: Event Hubの名前空間（例: Shimegi-CAE）。
+ eventHubName: Event Hubの名前（例: EventHub1）。
+ postgresqlDatabaseName: PostgreSQLデータベースの名前（例: myDatabase）。
+3. 変数の定義
+ 環境ごとに変数を定義し、再利用可能な値をまとめている。
+ 使用するリソースのロケーション（例: japaneast）を一元管理している。
+4. リソースの定義
+ 各リソースのtype、apiVersionが正しい。
+ 各リソースが必要なプロパティを持っている（例: サーバー名、SKU設定など）。
+ リソース間の依存関係がdependsOnで正しく設定されている。
+5. Azure Functions
+ kindがfunctionappに設定されている。
+ serverFarmIdが正しいApp ServiceプランのリソースIDを指している。
+ 適切なappSettingsが設定されている（例: ストレージアカウント接続文字列）。
+6. Azure Event Hub
+ Event Hub Namespaceが正しく設定されている（SKU: Standard、ロケーション: japaneast）。
+ Event Hub自体の設定が正しい（パーティション数: 2、メッセージ保持期間: 1日）。
+7. PostgreSQLサーバー
+ SKUがGP_Gen5_2、ストレージプロファイルのストレージサイズが5120MB。
+ administratorLoginとadministratorLoginPasswordがセキュリティ基準を満たしていること（例: 大文字、小文字、数字、特殊文字を含む8文字以上）。
+ SSLエンforcementがEnabledに設定されている。
+8. タグの設定
+ すべてのリソースに必要なタグ（例: 作成者タグ）が設定されている。
+9. エラーハンドリング
+ デプロイ中のエラーに対処するためのアクションが考慮されている（出力メッセージ、エラーログの取得など）。
+10. テストとバリデーション
+ テンプレートをデプロイして、リソースが正常に作成されるかテストする。
+ 環境変数や設定が正しくリソースに適用されることを確認する。
+具体的な設定例
+functionAppName: 3-63文字、英数字または-を含み、先頭と末尾に-がないこと。
+storageAccountName: 3-24文字、英数字または-を含み、先頭と末尾に-がないこと、すべて小文字であること。
+postgresqlServerName: 1-63文字、英数字または-を含み、先頭と末尾に-がないこと。
+postgresqlAdminLogin: 1-63文字、英数字または_を含む。
+postgresqlAdminPassword: 大文字、小文字、数字、特殊文字を含む8文字以上の強力なパスワード。
+eventHubNamespace: 1-50文字、英数字、-または_を含む。
+eventHubName: 1-256文字、英数字または-を含む。
+postgresqlDatabaseName: 1-63文字、英数字、-または_を含む。
+このチェックリストを使用することで、ARMテンプレートが正しく設定され、デプロイ時にエラーが発生しないように確認できます。
+
+作成したチェックリストにしたがって、以下のJSONファイルを確認し、指摘点があれば指摘しろ・
+JSONファイルを確認するためには、そのファイルの内容が必要です。JSONファイルの内容を提供していただければ、チェックリストに基づいて確認し、指摘点をお知らせします。内容をお送りください。
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_shimegi_cae_name": {
+            "defaultValue": "shimegi-cae",
+            "type": "String"
+        },
+        "namespaces_Shimegi_CAE_name": {
+            "defaultValue": "Shimegi-CAE",
+            "type": "String"
+        },
+        "storageAccounts_cae2shimegi_name": {
+            "defaultValue": "cae2shimegi",
+            "type": "String"
+        },
+        "serverfarms_ASP_RGSHIMEGICAE_b7eb_name": {
+            "defaultValue": "ASP-RGSHIMEGICAE-b7eb",
+            "type": "String"
+        },
+        "flexibleServers_shimegi_cae_server_name": {
+            "defaultValue": "shimegi-cae-server",
+            "type": "String"
+        },
+        "flexibleServers_admin_name": {
+            "defaultValue": "watchman",
+            "type": "String"
+        },
+        "flexibleServers_admin_password": {
+            "defaultValue": "cloudG2024",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+            "apiVersion": "2023-12-01-preview",
+            "name": "[parameters('flexibleServers_shimegi_cae_server_name')]",
+            "location": "Japan East",
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "sku": {
+                "name": "Standard_B1ms",
+                "tier": "Burstable"
+            },
+            "properties": {
+                "replica": {
+                    "role": "Primary"
+                },
+                "storage": {
+                    "iops": 120,
+                    "tier": "P4",
+                    "storageSizeGB": 32,
+                    "autoGrow": "Disabled"
+                },
+                "network": {
+                    "publicNetworkAccess": "Enabled"
+                },
+                "dataEncryption": {
+                    "type": "SystemManaged"
+                },
+                "authConfig": {
+                    "activeDirectoryAuth": "Disabled",
+                    "passwordAuth": "Enabled"
+                },
+                "version": "16",
+                "administratorLogin": "[parameters('flexibleServers_admin_name')]",
+                "administratorLoginPassword":"[parameters('flexibleServers_admin_password')]",
+                "availabilityZone": "2",
+                "backup": {
+                    "backupRetentionDays": 7,
+                    "geoRedundantBackup": "Disabled"
+                },
+                "highAvailability": {
+                    "mode": "Disabled"
+                },
+                "maintenanceWindow": {
+                    "customWindow": "Disabled",
+                    "dayOfWeek": 0,
+                    "startHour": 0,
+                    "startMinute": 0
+                },
+                "replicationRole": "Primary"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces",
+            "apiVersion": "2024-01-01",
+            "name": "[parameters('namespaces_Shimegi_CAE_name')]",
+            "location": "japaneast",
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "minimumTlsVersion": "1.2",
+                "publicNetworkAccess": "Enabled",
+                "disableLocalAuth": false,
+                "zoneRedundant": true,
+                "isAutoInflateEnabled": false,
+                "maximumThroughputUnits": 0,
+                "kafkaEnabled": true
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2023-04-01",
+            "name": "[parameters('storageAccounts_cae2shimegi_name')]",
+            "location": "japaneast",
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "defaultToOAuthAuthentication": true,
+                "allowCrossTenantReplication": false,
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": false,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2023-12-01",
+            "name": "[parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name')]",
+            "location": "Japan East",
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+                "perSiteScaling": false,
+                "elasticScaleEnabled": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0,
+                "zoneRedundant": false
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers/advancedThreatProtectionSettings",
+            "apiVersion": "2023-12-01-preview",
+            "name": "[concat(parameters('flexibleServers_shimegi_cae_server_name'), '/Default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_shimegi_cae_server_name'))]"
+            ],
+            "properties": {
+                "state": "Disabled"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+            "apiVersion": "2023-12-01-preview",
+            "name": "[concat(parameters('flexibleServers_shimegi_cae_server_name'), '/AllowAllAzureServicesAndResourcesWithinAzureIps_2024-7-9_10-43-37')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('flexibleServers_shimegi_cae_server_name'))]"
+            ],
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/authorizationrules",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(parameters('namespaces_Shimegi_CAE_name'), '/RootManageSharedAccessKey')]",
+            "location": "japaneast",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_Shimegi_CAE_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(parameters('namespaces_Shimegi_CAE_name'), '/cae_eventhu')]",
+            "location": "japaneast",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_Shimegi_CAE_name'))]"
+            ],
+            "properties": {
+                "retentionDescription": {
+                    "cleanupPolicy": "Delete",
+                    "retentionTimeInHours": 24
+                },
+                "messageRetentionInDays": 1,
+                "partitionCount": 1,
+                "status": "Active"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/networkrulesets",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(parameters('namespaces_Shimegi_CAE_name'), '/default')]",
+            "location": "japaneast",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_Shimegi_CAE_name'))]"
+            ],
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "defaultAction": "Allow",
+                "virtualNetworkRules": [],
+                "ipRules": [],
+                "trustedServiceAccessEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "allowPermanentDelete": false,
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2023-12-01",
+            "name": "[parameters('sites_shimegi_cae_name')]",
+            "location": "Japan East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name'))]"
+            ],
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "kind": "functionapp",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_shimegi_cae_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_shimegi_cae_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_RGSHIMEGICAE_b7eb_name'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "dnsConfiguration": {},
+                "vnetRouteAllEnabled": false,
+                "vnetImagePullEnabled": false,
+                "vnetContentShareEnabled": false,
+                "siteConfig": {
+                    "numberOfWorkers": 1,
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": false,
+                    "http20Enabled": false,
+                    "functionAppScaleLimit": 200,
+                    "minimumElasticInstanceCount": 0
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "vnetBackupRestoreEnabled": false,
+                "customDomainVerificationId": "F3566F620E40787577AB6A38DB59BE0A3C5D1EB3BBDD2827B4AEEEA1BC4DF93E",
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "redundancyMode": "None",
+                "publicNetworkAccess": "Enabled",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2023-12-01",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/ftp')]",
+            "location": "Japan East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
+            ],
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "properties": {
+                "allow": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2023-12-01",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/scm')]",
+            "location": "Japan East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
+            ],
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "properties": {
+                "allow": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2023-12-01",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/web')]",
+            "location": "Japan East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
+            ],
+            "tags": {
+                "作成者": "SHIMEGI"
+            },
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php"
+                ],
+                "netFrameworkVersion": "v8.0",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "acrUseManagedIdentityCreds": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "REDACTED",
+                "scmType": "None",
+                "use32BitWorkerProcess": false,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetRouteAllEnabled": false,
+                "vnetPrivatePortsCount": 0,
+                "publicNetworkAccess": "Enabled",
+                "cors": {
+                    "allowedOrigins": [
+                        "https://portal.azure.com"
+                    ],
+                    "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "scmMinTlsVersion": "1.2",
+                "ftpsState": "FtpsOnly",
+                "preWarmedInstanceCount": 0,
+                "functionAppScaleLimit": 200,
+                "functionsRuntimeScaleMonitoringEnabled": false,
+                "minimumElasticInstanceCount": 0,
+                "azureStorageAccounts": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2023-12-01",
+            "name": "[concat(parameters('sites_shimegi_cae_name'), '/', parameters('sites_shimegi_cae_name'), '.azurewebsites.net')]",
+            "location": "Japan East",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_shimegi_cae_name'))]"
+            ],
+            "properties": {
+                "siteName": "shimegi-cae",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(parameters('namespaces_Shimegi_CAE_name'), '/cae_eventhu/$Default')]",
+            "location": "japaneast",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaces_Shimegi_CAE_name'), 'cae_eventhu')]",
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaces_Shimegi_CAE_name'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-hosts')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/azure-webjobs-secrets')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "immutableStorageWithVersioning": {
+                    "enabled": false
+                },
+                "defaultEncryptionScope": "$account-encryption-key",
+                "denyEncryptionScopeOverride": false,
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2023-04-01",
+            "name": "[concat(parameters('storageAccounts_cae2shimegi_name'), '/default/shimegi-caea0d1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_cae2shimegi_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cae2shimegi_name'))]"
+            ],
+            "properties": {
+                "shareQuota": 102400,
+                "enabledProtocols": "SMB"
+            }
+        }
+    ]
+}
+提供されたJSONファイルをチェックリストに基づいて確認し、以下の指摘点を挙げます。
+
+チェックリストに基づく指摘点
+1. テンプレートの基本構成
+ $schema: 正しく設定されている。
+ contentVersion: 正しく設定されている。
+2. 必須パラメータの定義
+ flexibleServers_admin_password:
+指摘: パスワードが適切な強度を満たしているか確認が必要。現状では大文字、小文字、数字、特殊文字が含まれているものの、最小文字数（8文字以上）を確認する必要があります。
+3. 変数の定義
+ 変数は定義されていませんが、必要であれば設定を一元管理する変数セクションを追加することを検討してください。
+4. リソースの定義
+Azure Functions:
+
+ Microsoft.Web/serverfarms の定義があり、kindがfunctionappとして指定されています。
+ **serverFarmId**が正しく設定されています。
+Azure Event Hub:
+
+ Event Hub Namespaceが正しく設定されている（SKU: Standard、ロケーション: japaneast）。
+ maximumThroughputUnitsが0になっているのが気になる。設定が適切か検討してください。
+PostgreSQLサーバー:
+
+ availabilityZone が 2 に設定されていますが、必要なゾーンがどのようなものであるか確認してください。
+ administratorLoginとadministratorLoginPasswordの設定は適切ですが、全体的なセキュリティポリシーに依存します。
+ **highAvailability**がDisabledに設定されていますが、ビジネス要件によっては変更が必要かもしれません。
+5. タグの設定
+ 各リソースに「作成者」のタグが適切に設定されています。
+6. エラーハンドリング
+ エラーハンドリングの設定は見受けられません。デプロイ時に問題が発生した場合に備えて、出力メッセージなどの管理を検討してください。
+7. テストとバリデーション
+ テンプレートを実際にデプロイして、リソースが正常に作成されるかテストすることを推奨します。
+その他の指摘
+ロケーションの表記: locationがJapan Eastとjapaneastの両方で使用されています。統一することが望ましいです（例: japaneast）。
+パラメータ名: 一部のパラメータ名は命名規則に従っていないようです。パラメータ名はシンプルでわかりやすくすることが推奨されます。
+結論
+全体的には適切に設定されていますが、一部のパラメータ（特にパスワード）や設定について見直しをお勧めします。また、最終的にはデプロイテストを通じて、リソースが期待通りに作成されることを確認してください。

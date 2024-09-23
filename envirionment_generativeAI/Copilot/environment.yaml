@@ -1,0 +1,47 @@
+name: copilot_environment
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+  - id: "functionAppName"
+    name: Name of Azure Functions (Ex. cae-functions)
+    description: "Ex. cae-functions"
+    type: string
+
+  - id: "storageAccountName"
+    name: Name of Azure Storage Account (Ex. cae07shimegi29)
+    description: "Ex. cae07shimegi29"
+    type: string
+
+  - id: "postgresqlServerName"
+    name: Name of PostgreSQL server (Ex. shimegi-cae-server)
+    description: "Ex. shimegi-cae-server"
+    type: string
+
+  - id: "postgresqlAdminLogin"
+    name: Name of admin in PostgreSQL (Ex. watchman)
+    description: "Ex. watchman"
+    type: string
+
+  - id: "postgresqlAdminPassword"
+    name: Name of admin password in PostgreSQL (Ex. password)
+    description: "Ex. password"
+    required: true
+    type: string
+
+  - id: "eventHubNamespace"
+    name: Name of EventHub namespace (Ex. Shimegi-CAE)
+    description: "Ex. Shimegi-CAE"
+    type: string
+
+  - id: "eventHubName"
+    name: Name of Event Hub (Ex. EventHub1)
+    description: "Ex. EventHub1"
+    type: string
+
+  - id: "postgresqlDatabaseName"
+    name: Name of PostgreSQL database (Ex. myDatabase)
+    description: "Ex. myDatabase"
+    type: string

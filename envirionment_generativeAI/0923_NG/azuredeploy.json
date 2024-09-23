@@ -4,7 +4,7 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
+      "defaultValue": "Japan East",
       "metadata": {
         "description": "The location where the resources will be deployed."
       }

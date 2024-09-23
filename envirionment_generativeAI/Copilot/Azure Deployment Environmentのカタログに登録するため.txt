@@ -1,0 +1,402 @@
+Azure Deployment Environmentのカタログに登録するためのARMテンプレートとyamlファイルが欲しい。
+リソースはAzure Functions, Azure EventHub, Azure Database for postgreSQLのフレキシブルサーバー。全てパブリックアクセス可能で良い。
+変数は環境作成時に変更できるようにし、全リソースはJapan Eastで作成、作成者タグにSHIMEGIを紐づけてくれ。
+上を満たすようなARMテンプレートとyamlファイルを作れ。
+
+Copilot
+回答を生成しています…
+
+Copilot が送信しました:
+以下に、指定された要件を満たすARMテンプレートとYAMLファイルの例を示します。
+
+ARMテンプレート (azuredeploy.json)
+JSON
+
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Function App"
+      }
+    },
+    "eventHubNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Event Hub Namespace"
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Event Hub"
+      }
+    },
+    "postgresqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the PostgreSQL server"
+      }
+    },
+    "postgresqlDatabaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the PostgreSQL database"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "japaneast",
+      "metadata": {
+        "description": "Location for all resources"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'Default1')]"
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2021-06-01-preview",
+      "name": "[parameters('eventHubNamespaceName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2021-06-01-preview",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('postgresqlServerName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {
+        "administratorLogin": "adminuser",
+        "administratorLoginPassword": "yourpassword",
+        "version": "12",
+        "storage": {
+          "storageSizeGB": 32
+        },
+        "backup": {
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        },
+        "highAvailability": {
+          "mode": "Disabled"
+        },
+        "network": {
+          "publicNetworkAccess": "Enabled"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "apiVersion": "2021-06-01",
+      "name": "[concat(parameters('postgresqlServerName'), '/', parameters('postgresqlDatabaseName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {}
+    }
+  ]
+}
+AI で生成されたコード。ご確認のうえ、慎重にご使用ください。FAQ で詳細を確認。
+YAMLファイル (azure-pipelines.yml)
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'AzureServiceConnection'
+    subscriptionId: 'your-subscription-id'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'your-resource-group'
+    location: 'Japan East'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/azuredeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/azuredeploy.parameters.json'
+    deploymentMode: 'Incremental'
+
+このテンプレートとYAMLファイルを使用して、Azure Functions、Azure EventHub、Azure Database for PostgreSQLのフレキシブルサーバーをJapan Eastリージョンにデプロイできます。各リソースにはcreatedByタグとしてSHIMEGIが設定されています。
+
+必要に応じて、パラメータファイル（azuredeploy.parameters.json）を作成し、デプロイ時に使用する変数を指定してください。質問や追加のカスタマイズが必要な場合は教えてくださいね。
+
+詳細情報
+
+1
+
+qiita.com
+2
+
+learn.microsoft.com
+3
+
+github.com
+4
+
+github.com
+5
+
+azure.microsoft.com
+6
+
+github.com
++3 その他
+自分
+自分 が送信しました:
+postgreSQLのユーザー名とパスワードはパラメータにしてくれ。
+また、FunctionsやEventhubを使うためにはStorageが必要ではないか？もし良ければ追加してくれ。
+Copilot
+回答を生成しています…
+
+Copilot が送信しました:
+了解しました。以下に、PostgreSQLのユーザー名とパスワードをパラメータに追加し、Azure FunctionsとEventHubのためのストレージアカウントを追加したARMテンプレートとYAMLファイルを示します。
+
+ARMテンプレート (azuredeploy.json)
+JSON
+
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Function App"
+      }
+    },
+    "eventHubNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Event Hub Namespace"
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Event Hub"
+      }
+    },
+    "postgresqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the PostgreSQL server"
+      }
+    },
+    "postgresqlDatabaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the PostgreSQL database"
+      }
+    },
+    "postgresqlAdminUser": {
+      "type": "string",
+      "metadata": {
+        "description": "Administrator username for PostgreSQL"
+      }
+    },
+    "postgresqlAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Administrator password for PostgreSQL"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Storage Account"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "japaneast",
+      "metadata": {
+        "description": "Location for all resources"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-04-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2021-02-01",
+      "name": "Default1",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "size": "Y1",
+        "family": "Y",
+        "capacity": 0
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'Default1')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-04-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-04-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(parameters('functionAppName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2021-06-01-preview",
+      "name": "[parameters('eventHubNamespaceName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2021-06-01-preview",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('postgresqlServerName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('postgresqlAdminUser')]",
+        "administratorLoginPassword": "[parameters('postgresqlAdminPassword')]",
+        "version": "12",
+        "storage": {
+          "storageSizeGB": 32
+        },
+        "backup": {
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        },
+        "highAvailability": {
+          "mode": "Disabled"
+        },
+        "network": {
+          "publicNetworkAccess": "Enabled"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "apiVersion": "2021-06-01",
+      "name": "[concat(parameters('postgresqlServerName'), '/', parameters('postgresqlDatabaseName'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "createdBy": "SHIMEGI"
+      },
+      "properties": {}
+    }
+  ]
+}
+AI で生成されたコード。ご確認のうえ、慎重にご使用ください。FAQ で詳細を確認。
+YAMLファイル (azure-pipelines.yml)
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'AzureServiceConnection'
+    subscriptionId: 'your-subscription-id'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'your-resource-group'
+    location: 'Japan East'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/azuredeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/azuredeploy.parameters.json'
+    deploymentMode: 'Incremental'
+
+このテンプレートとYAMLファイルを使用して、Azure Functions、Azure EventHub、Azure Database for PostgreSQLのフレキシブルサーバー、および必要なストレージアカウントをJapan Eastリージョンにデプロイできます。各リソースにはcreatedByタグとしてSHIMEGIが設定されています。
+
+必要に応じて、パラメータファイル（azuredeploy.parameters.json）を作成し、デプロイ時に使用する変数を指定してください。質問や追加のカスタマイズが必要な場合は教えてくださいね。

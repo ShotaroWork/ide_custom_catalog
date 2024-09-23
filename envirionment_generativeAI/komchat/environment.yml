@@ -1,0 +1,108 @@
+name: komchat_environment
+version: 1.0.0
+summary: Azure Custom Environment including EventHub
+description: Functions included
+runner: ARM
+templatePath: azuredeploy.json
+parameters:
+  - id: "functionAppName"
+    name: Name of Azure Functions (Ex. cae-functions)
+    description: "Ex. cae-functions"
+    type: string
+
+  - id: "storageAccountName"
+    name: Name of Azure Storage Account (Ex. cae07shimegi29)
+    description: "Ex. cae07shimegi29"
+    type: string
+
+  - id: "postgresqlServerName"
+    name: Name of PostgreSQL server (Ex. shimegi-cae-server)
+    description: "Ex. shimegi-cae-server"
+    type: string
+
+  - id: "postgresqlAdminLogin"
+    name: Name of admin in PostgreSQL (Ex. watchman)
+    description: "Ex. watchman"
+    type: string
+
+  - id: "postgresqlAdminPassword"
+    name: Name of admin password in PostgreSQL (Ex. password)
+    description: "Ex. password"
+    required: true
+    type: string
+
+  - id: "eventHubNamespace"
+    name: Name of EventHub namespace (Ex. Shimegi-CAE)
+    description: "Ex. Shimegi-CAE"
+    type: string
+
+  - id: "eventHubName"
+    name: Name of Event Hub (Ex. EventHub1)
+    description: "Ex. EventHub1"
+    type: string
+
+  - id: "postgresqlDatabaseName"
+    name: Name of PostgreSQL database (Ex. myDatabase)
+    description: "Ex. myDatabase"
+    type: string
+
+resources:
+  - type: "Microsoft.Web/sites"
+    apiVersion: "2021-02-01"
+    name: "[parameters('functionAppName')]"
+    location: "japaneast"
+    kind: "functionapp"
+    properties:
+      serverFarmId: "[resourceId('Microsoft.Web/serverfarms', concat(parameters('functionAppName'), 'Plan'))]"
+      siteConfig:
+        appSettings:
+          - name: "AzureWebJobsStorage"
+            value: "UseDevelopmentStorage=true"
+
+  - type: "Microsoft.EventHub/namespaces"
+    apiVersion: "2021-11-01-preview"
+    name: "[parameters('eventHubNamespace')]"
+    location: "japaneast"
+    sku:
+      name: "Standard"
+      tier: "Standard"
+    properties:
+      isAutoInflateEnabled: true
+      maximumThroughputUnits: 20
+
+  - type: "Microsoft.EventHub/namespaces/eventhubs"
+    apiVersion: "2021-11-01-preview"
+    name: "[parameters('eventHubName')]"
+    dependsOn:
+      - "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespace'))]"
+    properties:
+      partitionCount: 2
+      messageRetentionInDays: 1
+
+  - type: "Microsoft.DBforPostgreSQL/servers"
+    apiVersion: "2021-06-01"
+    name: "[parameters('postgresqlServerName')]"
+    location: "japaneast"
+    sku:
+      name: "GP_Gen5_2"
+      tier: "GeneralPurpose"
+      capacity: 2
+      family: "Gen5"
+    properties:
+      administratorLogin: "[parameters('postgresqlAdminLogin')]"
+      administratorLoginPassword: "[parameters('postgresqlAdminPassword')]"
+      version: "11"
+      sslEnforcement: "Enabled"
+      storageProfile:
+        storageMB: 5120
+        backupRetentionDays: 7
+        geoRedundantBackup: "Disabled"
+
+  - type: "Microsoft.DBforPostgreSQL/servers/databases"
+    apiVersion: "2021-06-01"
+    name: "[parameters('postgresqlDatabaseName')]"
+    dependsOn:
+      - "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('postgresqlServerName'))]"
+    properties: {}
+
+outputs: {}

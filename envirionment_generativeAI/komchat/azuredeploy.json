@@ -1,0 +1,128 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Function App Name"
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "metadata": {
+        "description": "Event Hub Name"
+      }
+    },
+    "postgresqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "PostgreSQL Server Name"
+      }
+    },
+    "postgresqlDatabaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "PostgreSQL Database Name"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "PostgreSQL Admin Username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "PostgreSQL Admin Password"
+      }
+    }
+  },
+  "variables": {
+    "location": "japaneast",
+    "tags": {
+      "Creator": "SHIMEGI"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[variables('location')]",
+      "kind": "functionapp",
+      "tags": "[variables('tags')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('functionAppName'), 'Plan'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "UseDevelopmentStorage=true"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[concat(parameters('eventHubName'), 'Namespace')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "isAutoInflateEnabled": true,
+        "maximumThroughputUnits": 20
+      }
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[parameters('eventHubName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', concat(parameters('eventHubName'), 'Namespace'))]"
+      ],
+      "properties": {
+        "partitionCount": 2,
+        "messageRetentionInDays": 1
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('postgresqlServerName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "tier": "GeneralPurpose",
+        "capacity": 2,
+        "family": "Gen5"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('adminUsername')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "version": "11",
+        "sslEnforcement": "Enabled",
+        "storageProfile": {
+          "storageMB": 5120,
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers/databases",
+      "apiVersion": "2021-06-01",
+      "name": "[parameters('postgresqlDatabaseName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('postgresqlServerName'))]"
+      ],
+      "properties": {}
+    }
+  ],
+  "outputs": {}
+}
